@@ -1,0 +1,36 @@
+version: "3.3"
+
+services:
+    apiclientes:
+        container_name: apiclientes
+        build: .
+        #command: tail -f /dev/null
+        command: bash -c "./manage.py runserver 0:8001"
+        ports:
+            - 8001:8001
+        volumes:
+            - .:/app 
+        networks:
+            - private
+        depends_on:
+            - database
+    
+    database:
+        container_name: database
+        image: postgres:13
+        ports:
+            - 5432:5432
+        volumes:
+            - apiclientes_pgdata:/var/lib/postgresql/data
+        networks:
+            - private
+        environment:
+            POSTGRES_USER: ${DATABASE_USER}
+            POSTGRES_PASSWORD: ${DATABASE_PASS}
+            POSTGRES_DB: ${DATABASE_NAME}
+
+networks:
+    private:
+
+volumes:
+    apiclientes_pgdata:
